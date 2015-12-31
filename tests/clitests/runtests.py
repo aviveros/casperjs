@@ -57,6 +57,7 @@ def getEngine(engine_exec):
     }
 
 ENGINE = getEngine(ENGINE_EXEC)
+USING_PHANTOM_2_1 = 'phantomjs' == ENGINE['NAME'] and '2' == ENGINE['VERSION']['MAJOR'] and '1' == ENGINE['VERSION']['MINOR'];
 
 # FIXME: slimerjs is not yet ready to be used as CLI because it is not
 # possible to pass arguments to the main script with slimerjs
@@ -381,8 +382,8 @@ class TestCommandOutputTest(CasperExecTestBase):
             '# true',
             'FAIL Subject is strictly true',
             '#    type: assert',
-            '#    file: %s:3' % script_path,
-            '#    code: test.assert(false);',
+            ('#    file: %s' % script_path) if (USING_PHANTOM_2_1) else ('#    file: %s:3' % script_path),	# no line number for USING_PHANTOM_2_1
+            ('#    type: assert') if (USING_PHANTOM_2_1) else ('#    code: test.assert(false);'),	# code: present only with line number
             '#    subject: false',
             'FAIL 1 test executed',
             '0 passed',
@@ -478,8 +479,8 @@ class TestCommandOutputTest(CasperExecTestBase):
             '# true',
             'FAIL Subject is strictly true',
             '#    type: assert',
-            '#    file: %s:3' % failing_script,
-            '#    code: test.assert(false);',
+            ('#    file: %s' % failing_script) if (USING_PHANTOM_2_1) else ('#    file: %s:3' % failing_script),	# no line number for USING_PHANTOM_2_1
+            ('#    type: assert') if (USING_PHANTOM_2_1) else ('#    code: test.assert(false);'),	# code: present only with line number
             '#    subject: false',
             'Test file: %s' % mytest_script,
             'PASS ok1',
