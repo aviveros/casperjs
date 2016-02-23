@@ -1440,10 +1440,16 @@ Casper.prototype.open = function open(location, settings) {
     this.page.customHeaders = utils.mergeObjects(utils.clone(baseCustomHeaders), customHeaders);
     // perfom request
     this.browserInitializing = true;
-    this.page.openUrl(this.requestUrl, {
+    var phantomJsSettings = {
         operation: settings.method,
         data:      settings.data
-    }, this.page.settings);
+    };
+    // override any default encoding setting in phantomjs
+    if ('encoding' in settings) {
+        phantomJsSettings.encoding = settings.encoding;
+    }
+
+    this.page.openUrl(this.requestUrl, phantomJsSettings, this.page.settings);
     // revert base custom headers
     this.page.customHeaders = baseCustomHeaders;
     return this;
@@ -2417,6 +2423,26 @@ Casper.prototype.withPopup = function withPopup(popupInfo, then) {
         // revert to main page
         this.page = this.mainPage;
     });
+};
+
+/**
+* Allow user to create a new page object after calling a casper.page.close()
+* @return WebPage
+*/
+
+Casper.prototype.newPage = function newPage() {
+    "use strict";
+    this.checkStarted();
+    this.page.close();
+    this.page = this.mainPage = createPage(this);
+    this.page.settings = utils.mergeObjects(this.page.settings, this.options.pageSettings);
+    if (utils.isClipRect(this.options.clipRect)) {
+        this.page.clipRect = this.options.clipRect;
+    }
+    if (utils.isObject(this.options.viewportSize)) {
+        this.page.viewportSize = this.options.viewportSize;
+    }
+    return this.page;
 };
 
 /**

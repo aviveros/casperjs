@@ -1371,6 +1371,28 @@ Supported events are ``mouseup``, ``mousedown``, ``click``, ``mousemove``, ``mou
 
     casper.run();
 
+``newPage()``
+-------------------------------------------------------------------------------
+
+**Signature:** ``newPage()``
+
+.. versionadded:: 1.1
+
+Creates a new WebPage instance::
+
+    casper.start('http://google.com', function() {
+        // ...
+    });
+
+    casper.then(function() {
+        casper.page = casper.newPage();
+        casper.open('http://yahoo.com').then( function() {
+            // ....
+        });
+    });
+
+    casper.run();
+
 .. index:: HTTP, HTTP Request, HTTP Method, HTTP Headers
 
 ``open()``
@@ -1422,6 +1444,22 @@ To pass nested parameters arrays::
     });
 
 .. versionadded:: 1.0
+
+To POST some data with utf-8 encoding::
+
+    casper.open('http://some.testserver.com/post.php', {
+           method: 'post',
+           headers: {
+               'Content-Type': 'application/json; charset=utf-8'
+           },
+           encoding: 'utf8', // not enforced by default
+           data: {
+                'table_flip': '(╯°□°）╯︵ ┻━┻ ',
+           }
+    });
+
+.. versionadded:: 1.1
+
 
 You can also set custom request headers to send when performing an outgoing request, passing the ``headers`` option::
 
