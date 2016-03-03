@@ -1204,7 +1204,9 @@ Casper.prototype.handleReceivedResource = function(resource) {
         return;
     }
     this.resources.push(resource);
-    if (utils.decodeUrl(resource.url) !== this.requestUrl) {
+
+    var checkUrl = utils.ltVersion(phantom.version, '2.2.0') ? utils.decodeUrl(resource.url) : resource.url;
+    if (checkUrl !== this.requestUrl) {
         return;
     }
     this.currentHTTPStatus = null;
