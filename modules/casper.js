@@ -2634,7 +2634,8 @@ function createPage(casper) {
     };
     page.onResourceRequested = function onResourceRequested(requestData, request) {
         casper.emit('resource.requested', requestData, request);
-        if (requestData.url === casper.requestUrl) {
+    	var checkUrl = utils.ltVersion(phantom.version, '2.1.0') ? utils.decodeUrl(requestData.url) : requestData.url;
+        if (checkUrl === casper.requestUrl) {
             casper.emit('page.resource.requested', requestData, request);
         }
         if (utils.isFunction(casper.options.onResourceRequested)) {
